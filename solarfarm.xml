@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:////Applications/rti_connext_dds-6.1.0/bin/../resource/app/app_support/rtiddsgen/schema/rti_dds_profiles.xsd">
+<qos_library name="SolarFarmQosLibrary">
+    <qos_profile name="SolarFarmQosProfile" is_default_qos="true">
+
+        <datawriter_qos>
+            <history>
+                <kind>KEEP_ALL_HISTORY_QOS</kind>
+            </history>
+            <reliability>
+                <kind>RELIABLE_RELIABILITY_QOS</kind>
+            </reliability>
+        </datawriter_qos>
+ 
+        <datareader_qos>
+            <history>
+                <kind>KEEP_ALL_HISTORY_QOS</kind>
+            </history>
+            <reliability>
+                <kind>RELIABLE_RELIABILITY_QOS</kind>
+            </reliability>
+        </datareader_qos>
+
+        <!-- <datareader_qos>
+            <history>
+                <kind>KEEP_ALL_HISTORY_QOS</kind>
+            </history>
+            <reliability>
+                <kind>RELIABLE_RELIABILITY_QOS</kind>
+            </reliability>
+            <durability>
+                <kind>TRANSIENT_DURABILITY_QOS</kind>
+            </durability>
+        </datareader_qos>
+        <datawriter_qos>
+            <history>
+                <kind>KEEP_ALL_HISTORY_QOS</kind>
+            </history>
+            <reliability>
+                <kind>RELIABLE_RELIABILITY_QOS</kind>
+            </reliability>
+            <durability>
+                <kind>TRANSIENT_DURABILITY_QOS</kind>
+            </durability>
+        </datawriter_qos> -->
+    </qos_profile>
+</qos_library>
+<types>
+<struct name= "LoadController">
+  <member name="id" type="uint16"/>
+  <member name="timestamp" stringMaxLength="255" type="string"/>
+  <member name="load" type="uint32"/>
+</struct>
+<struct name= "StorageController">
+  <member name="id" type="uint16"/>
+  <member name="timestamp" stringMaxLength="255" type="string"/>
+  <member name="energyStorage" type="uint32"/>
+</struct>
+<struct name= "SolarPanelController">
+  <member name="id" type="uint16"/>
+  <member name="timestamp" stringMaxLength="255" type="string"/>
+  <member name="energy" type="uint32"/>
+</struct>
+</types>
+<domain_library name="SolarFarmDomainLibrary">
+    <domain name="SolarFarmDomain" domain_id="0">
+        <register_type name="LoadControllerType" type_ref="LoadController"/>
+        <register_type name="StorageControllerType" type_ref="StorageController"/>
+        <register_type name="SolarPanelControllerType" type_ref="SolarPanelController"/>
+        <topic name="LoadControllerTopic" register_type_ref="LoadControllerType"/>
+        <topic name="StorageControllerTopic" register_type_ref="StorageControllerType"/>
+        <topic name="SolarPanelControllerTopic" register_type_ref="SolarPanelControllerType"/>
+    </domain>
+</domain_library>
+<domain_participant_library name="SolarFarmParticipantLibrary">
+    <domain_participant name="SolarFarmDataPublisherParticipant" domain_ref="SolarFarmDomainLibrary::SolarFarmDomain">
+        <publisher name="SolarFarmDataPublisher">
+            <data_writer name="LoadControllerDataWriter" topic_ref="LoadControllerTopic" />
+            <data_writer name="StorageControllerDataWriter" topic_ref="StorageControllerTopic" />
+            <data_writer name="SolarPanelControllerDataWriter" topic_ref="SolarPanelControllerTopic" />
+        </publisher>
+    </domain_participant>
+
+    <domain_participant name="SolarFarmDataSubscriberParticipant" domain_ref="SolarFarmDomainLibrary::SolarFarmDomain">
+        <subscriber name="SolarFarmDataSubscriber">
+            <data_reader name="LoadControllerDataReader" topic_ref="LoadControllerTopic" />
+            <data_reader name="StorageControllerDataReader" topic_ref="StorageControllerTopic" />
+            <data_reader name="SolarPanelControllerDataReader" topic_ref="SolarPanelControllerTopic" />
+        </subscriber>
+    </domain_participant>
+</domain_participant_library>
+</dds>
